@@ -6,7 +6,8 @@ import {
   Param,
   Delete,
   HttpCode,
-  ParseUUIDPipe, Put
+  ParseUUIDPipe,
+  Put,
 } from '@nestjs/common';
 import { ArtistsService } from './artists.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
