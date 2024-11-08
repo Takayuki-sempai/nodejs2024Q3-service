@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UserDto } from './dto/user.dto';
 import { InMemoryUsersStorage } from './storage/in-memory.users.storage';
 import { UserEntity } from './entities/user.entity';
@@ -37,7 +37,7 @@ export class UsersService {
     return this.entityToDto(entity);
   }
 
-  update(id: string, updateUserDto: UpdateUserDto): UserDto {
+  update(id: string, updateUserDto: UpdatePasswordDto): UserDto {
     const entity = this.usersStorage.findById(id);
     if (!entity) throw new NotFoundException(`User with id ${id} not found`);
     if (entity.password != updateUserDto.oldPassword) {

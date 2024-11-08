@@ -1,6 +1,6 @@
 import { IsDefined } from 'class-validator';
 
-export class UpdateUserDto {
+export class UpdatePasswordDto {
   @IsDefined()
   oldPassword: string;
   @IsDefined()
