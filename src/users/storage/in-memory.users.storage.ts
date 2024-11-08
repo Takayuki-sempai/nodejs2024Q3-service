@@ -3,22 +3,22 @@ import { User } from '../entities/user';
 
 @Injectable()
 export class InMemoryUsersStorage {
-  private users: Map<string, User> = new Map();
+  private entities: Map<string, User> = new Map();
 
   findAll(): User[] {
-    return [...this.users.values()];
+    return [...this.entities.values()];
   }
 
   findById(id: string): User | undefined {
-    return this.users.get(id);
+    return this.entities.get(id);
   }
 
   save(user: User): User {
-    this.users.set(user.id, user);
+    this.entities.set(user.id, user);
     return user;
   }
 
   remove(id: string): boolean {
-    return this.users.delete(id);
+    return this.entities.delete(id);
   }
 }
