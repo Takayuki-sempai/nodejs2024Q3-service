@@ -17,4 +17,8 @@ export class InMemoryUsersStorage {
     this.users.set(user.id, user);
     return user;
   }
+
+  remove(id: string) {
+    this.users.delete(id);
+  }
 }

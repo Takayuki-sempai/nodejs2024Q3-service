@@ -35,8 +35,8 @@ export class UsersService {
     return `This action updates a #${id} user`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  remove(id: string) {
+    this.usersStorage.remove(id);
   }
 
   private entityToDto(entity: UserEntity): UserDto {
