@@ -33,13 +33,17 @@ export class UsersService {
 
   findOne(id: string): UserDto {
     const entity = this.storage.findById(id);
-    if (!entity) throw new NotFoundException(`User with id ${id} not found`);
+    if (!entity) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
     return this.entityToDto(entity);
   }
 
   update(id: string, updateUserDto: UpdatePasswordDto): UserDto {
     const entity = this.storage.findById(id);
-    if (!entity) throw new NotFoundException(`User with id ${id} not found`);
+    if (!entity) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
     if (entity.password != updateUserDto.oldPassword) {
       throw new ForbiddenException(`OldPassword is wrong`);
     }
@@ -52,7 +56,9 @@ export class UsersService {
 
   remove(id: string) {
     const isDeleted = this.storage.remove(id);
-    if (!isDeleted) throw new NotFoundException(`User with id ${id} not found`);
+    if (!isDeleted) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
   }
 
   private entityToDto(entity: User): UserDto {

@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '../entities/user';
+import { Artist } from '../entities/artist.entity';
 
 @Injectable()
-export class InMemoryUsersStorage {
-  private entities: Map<string, User> = new Map();
+export class InMemoryArtistsStorage {
+  private entities: Map<string, Artist> = new Map();
 
-  findAll(): User[] {
+  findAll(): Artist[] {
     return [...this.entities.values()];
   }
 
-  findById(id: string): User | undefined {
+  findById(id: string): Artist | undefined {
     return this.entities.get(id);
   }
 
-  save(entity: User): User {
+  save(entity: Artist): Artist {
     this.entities.set(entity.id, entity);
     return entity;
   }
