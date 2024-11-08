@@ -1,5 +1,5 @@
 export class UserEntity {
-  id: string; // uuid v4
+  id: string;
   login: string;
   password: string;
   version: number; // integer number, increments on update
