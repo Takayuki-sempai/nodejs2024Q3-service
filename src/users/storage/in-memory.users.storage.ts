@@ -18,7 +18,7 @@ export class InMemoryUsersStorage {
     return user;
   }
 
-  remove(id: string) {
-    this.users.delete(id);
+  remove(id: string): boolean {
+    return this.users.delete(id);
   }
 }

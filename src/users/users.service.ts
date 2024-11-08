@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from './dto/user.dto';
@@ -28,6 +28,7 @@ export class UsersService {
 
   findOne(id: string) {
     const entity = this.usersStorage.findById(id);
+    if (!entity) throw new NotFoundException(`User with id ${id} not found`);
     return this.entityToDto(entity);
   }
 
@@ -36,7 +37,8 @@ export class UsersService {
   }
 
   remove(id: string) {
-    this.usersStorage.remove(id);
+    const isDeleted = this.usersStorage.remove(id);
+    if (!isDeleted) throw new NotFoundException(`User with id ${id} not found`);
   }
 
   private entityToDto(entity: UserEntity): UserDto {
