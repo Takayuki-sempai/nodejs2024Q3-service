@@ -1,23 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
 import { UserDto } from './dto/user.dto';
-
-const users: Map<string, User> = new Map();
+import { InMemoryUsersStorage } from './storage/in-memory.users.storage';
+import { UserEntity } from './entities/user.entity';
+import { v4 as uuid4 } from 'uuid';
 
 @Injectable()
 export class UsersService {
+  constructor(private readonly usersStorage: InMemoryUsersStorage) {}
+
   create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+    const entity = {
+      ...createUserDto,
+      id: uuid4(),
+      version: 0,
+      createdAt: new Date().getTime(),
+      updatedAt: new Date().getTime(),
+    } as UserEntity;
+    const savedEntity = this.usersStorage.save(entity);
+    return this.entityToDto(savedEntity);
   }
 
   findAll(): UserDto[] {
-    return [...users.values()].map((user) => ({ ...user } as UserDto));
+    return this.usersStorage.findAll().map(this.entityToDto);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findOne(id: string) {
+    const entity = this.usersStorage.findById(id);
+    return this.entityToDto(entity);
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
@@ -26,5 +37,9 @@ export class UsersService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  private entityToDto(entity: UserEntity): UserDto {
+    return { ...entity } as UserDto;
   }
 }

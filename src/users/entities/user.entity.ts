@@ -1,4 +1,4 @@
-export class User {
+export class UserEntity {
   id: string; // uuid v4
   login: string;
   password: string;
