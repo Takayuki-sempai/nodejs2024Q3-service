@@ -7,7 +7,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UserDto } from './dto/user.dto';
 import { InMemoryUsersStorage } from './storage/in-memory.users.storage';
-import { UserEntity } from './entities/user.entity';
+import { User } from './entities/user';
 import { v4 as uuid4 } from 'uuid';
 import { plainToInstance } from 'class-transformer';
 
@@ -22,7 +22,7 @@ export class UsersService {
       version: 1,
       createdAt: new Date().getTime(),
       updatedAt: new Date().getTime(),
-    } as UserEntity;
+    } as User;
     const savedEntity = this.usersStorage.save(entity);
     return this.entityToDto(savedEntity);
   }
@@ -55,7 +55,7 @@ export class UsersService {
     if (!isDeleted) throw new NotFoundException(`User with id ${id} not found`);
   }
 
-  private entityToDto(entity: UserEntity): UserDto {
+  private entityToDto(entity: User): UserDto {
     return plainToInstance(UserDto, entity, { excludeExtraneousValues: true });
   }
 }
