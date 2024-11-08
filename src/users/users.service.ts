@@ -1,10 +1,15 @@
-import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from './dto/user.dto';
 import { InMemoryUsersStorage } from './storage/in-memory.users.storage';
 import { UserEntity } from './entities/user.entity';
 import { v4 as uuid4 } from 'uuid';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class UsersService {
@@ -14,7 +19,7 @@ export class UsersService {
     const entity = {
       ...createUserDto,
       id: uuid4(),
-      version: 0,
+      version: 1,
       createdAt: new Date().getTime(),
       updatedAt: new Date().getTime(),
     } as UserEntity;
@@ -51,6 +56,6 @@ export class UsersService {
   }
 
   private entityToDto(entity: UserEntity): UserDto {
-    return { ...entity } as UserDto;
+    return plainToInstance(UserDto, entity, { excludeExtraneousValues: true });
   }
 }

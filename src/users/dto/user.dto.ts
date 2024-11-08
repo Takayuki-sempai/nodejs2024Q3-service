@@ -1,7 +1,9 @@
+import { Expose } from 'class-transformer';
+
 export class UserDto {
-  id: string;
-  login: string;
-  version: number;
-  createdAt: number;
-  updatedAt: number;
+  @Expose() id: string;
+  @Expose() login: string;
+  @Expose() version: number;
+  @Expose() createdAt: number;
+  @Expose() updatedAt: number;
 }
