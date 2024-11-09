@@ -1,50 +1,50 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateTrackDto } from './dto/create-track.dto';
-import { InMemoryTracksStorage } from './storage/in-memory.tracks.storage';
+import { CreateAlbumDto } from './dto/create-album.dto';
+import { UpdateAlbumDto } from './dto/update-album.dto';
+import { InMemoryAlbumsStorage } from './storage/in-memory.albums.storage';
 import { plainToInstance } from 'class-transformer';
 import { v4 as uuid4 } from 'uuid';
-import { TrackDto } from './dto/track.dto';
-import { Track } from './entities/track.entity';
-import { UpdateTrackDto } from './dto/update-track.dto';
 import { InMemoryArtistsStorage } from '../artists/storage/in-memory.artists.storage';
+import { Album } from './entities/album.entity';
+import { AlbumDto } from './dto/album.dto';
 
 @Injectable()
-export class TracksService {
+export class AlbumsService {
   constructor(
-    private readonly storage: InMemoryTracksStorage,
+    private readonly storage: InMemoryAlbumsStorage,
     private readonly artistStorage: InMemoryArtistsStorage,
   ) {}
 
-  create(createTrackDto: CreateTrackDto): TrackDto {
-    this.validateArtist(createTrackDto.artistId);
-    const entity = plainToInstance(Track, {
-      ...createTrackDto,
+  create(createAlbumDto: CreateAlbumDto): AlbumDto {
+    this.validateArtist(createAlbumDto.artistId);
+    const entity = plainToInstance(Album, {
+      ...createAlbumDto,
       id: uuid4(),
     });
     const savedEntity = this.storage.save(entity);
     return this.entityToDto(savedEntity);
   }
 
-  findAll(): TrackDto[] {
+  findAll(): AlbumDto[] {
     return this.storage.findAll().map(this.entityToDto);
   }
 
-  findOne(id: string): TrackDto {
+  findOne(id: string): AlbumDto {
     const entity = this.storage.findById(id);
     if (!entity) {
-      throw new NotFoundException(`Track with id ${id} not found`);
+      throw new NotFoundException(`Album with id ${id} not found`);
     }
     return this.entityToDto(entity);
   }
 
-  update(id: string, updateTrackDto: UpdateTrackDto): TrackDto {
-    this.validateArtist(updateTrackDto.artistId);
+  update(id: string, updateAlbumDto: UpdateAlbumDto): AlbumDto {
+    this.validateArtist(updateAlbumDto.artistId);
     const entity = this.storage.findById(id);
     if (!entity) {
-      throw new NotFoundException(`Track with id ${id} not found`);
+      throw new NotFoundException(`Album with id ${id} not found`);
     }
     const updatedEntity = this.storage.save(
-      plainToInstance(Track, { id, ...updateTrackDto }),
+      plainToInstance(Album, { id, ...updateAlbumDto }),
     );
     return this.entityToDto(updatedEntity);
   }
@@ -52,7 +52,7 @@ export class TracksService {
   remove(id: string) {
     const isDeleted = this.storage.remove(id);
     if (!isDeleted) {
-      throw new NotFoundException(`Track with id ${id} not found`);
+      throw new NotFoundException(`Album with id ${id} not found`);
     }
   }
 
@@ -65,8 +65,8 @@ export class TracksService {
     }
   }
 
-  private entityToDto(entity: Track): TrackDto {
-    return plainToInstance(TrackDto, entity, {
+  private entityToDto(entity: Album): AlbumDto {
+    return plainToInstance(AlbumDto, entity, {
       excludeExtraneousValues: true,
       exposeDefaultValues: true,
     });
