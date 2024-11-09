@@ -38,7 +38,7 @@ export class ArtistsService {
       throw new NotFoundException(`Artist with id ${id} not found`);
     }
     const updatedEntity = this.storage.save(
-      plainToInstance(Artist, { ...entity, ...updateArtistDto }),
+      plainToInstance(Artist, { id, ...updateArtistDto }),
     );
     return this.entityToDto(updatedEntity);
   }
