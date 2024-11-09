@@ -7,16 +7,19 @@ import { TrackDto } from './dto/track.dto';
 import { Track } from './entities/track.entity';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { InMemoryArtistsStorage } from '../artists/storage/in-memory.artists.storage';
+import { InMemoryAlbumsStorage } from '../albums/storage/in-memory.albums.storage';
 
 @Injectable()
 export class TracksService {
   constructor(
     private readonly storage: InMemoryTracksStorage,
+    private readonly albumStorage: InMemoryAlbumsStorage,
     private readonly artistStorage: InMemoryArtistsStorage,
   ) {}
 
   create(createTrackDto: CreateTrackDto): TrackDto {
     this.validateArtist(createTrackDto.artistId);
+    this.validateAlbum(createTrackDto.albumId);
     const entity = plainToInstance(Track, {
       ...createTrackDto,
       id: uuid4(),
@@ -39,6 +42,7 @@ export class TracksService {
 
   update(id: string, updateTrackDto: UpdateTrackDto): TrackDto {
     this.validateArtist(updateTrackDto.artistId);
+    this.validateAlbum(updateTrackDto.albumId);
     const entity = this.storage.findById(id);
     if (!entity) {
       throw new NotFoundException(`Track with id ${id} not found`);
@@ -61,6 +65,15 @@ export class TracksService {
       const artist = this.artistStorage.findById(artistId);
       if (!artist) {
         throw new NotFoundException(`Artist ${artistId} not found`);
+      }
+    }
+  }
+
+  private validateAlbum(albumId: string | null) {
+    if (albumId != null) {
+      const album = this.albumStorage.findById(albumId);
+      if (!album) {
+        throw new NotFoundException(`Album ${albumId} not found`);
       }
     }
   }

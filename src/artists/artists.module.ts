@@ -3,11 +3,12 @@ import { ArtistsService } from './artists.service';
 import { ArtistsController } from './artists.controller';
 import { InMemoryArtistsStorage } from './storage/in-memory.artists.storage';
 import { TracksModule } from '../tracks/tracks.module';
+import { AlbumsModule } from '../albums/albums.module';
 
 @Module({
   controllers: [ArtistsController],
   providers: [ArtistsService, InMemoryArtistsStorage],
   exports: [InMemoryArtistsStorage],
-  imports: [forwardRef(() => TracksModule)],
+  imports: [forwardRef(() => TracksModule), forwardRef(() => AlbumsModule)],
 })
 export class ArtistsModule {}

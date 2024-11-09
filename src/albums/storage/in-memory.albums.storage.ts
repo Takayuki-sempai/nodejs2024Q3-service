@@ -22,6 +22,11 @@ export class InMemoryAlbumsStorage {
   }
 
   remove(id: string): boolean {
+    this.removeFromTracksCascade(id);
+    return this.entities.delete(id);
+  }
+
+  private removeFromTracksCascade(id: string) {
     const tracks = this.tracksStorage
       .findAll()
       .filter((track) => track.albumId == id);
@@ -29,6 +34,5 @@ export class InMemoryAlbumsStorage {
       track.albumId = null;
       this.tracksStorage.save(track);
     });
-    return this.entities.delete(id);
   }
 }
