@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { InMemoryFavoritesStorage } from './storage/in-memory.favorites.storage';
 import { InMemoryAlbumsStorage } from '../albums/storage/in-memory.albums.storage';
 import { InMemoryArtistsStorage } from '../artists/storage/in-memory.artists.storage';
@@ -34,6 +34,12 @@ export class FavoritesService {
   }
 
   addArtist(id: string) {
+    const artist = this.artistsStorage.findById(id);
+    if (!artist) {
+      throw new UnprocessableEntityException(
+        `Artist with id ${id} doesn't exists`,
+      );
+    }
     this.storage.addArtist(id);
   }
 
@@ -47,6 +53,12 @@ export class FavoritesService {
   }
 
   addAlbum(id: string) {
+    const album = this.albumsStorage.findById(id);
+    if (!album) {
+      throw new UnprocessableEntityException(
+        `Album with id ${id} doesn't exists`,
+      );
+    }
     this.storage.addAlbum(id);
   }
 
@@ -58,6 +70,12 @@ export class FavoritesService {
   }
 
   addTrack(id: string) {
+    const track = this.tracksStorage.findById(id);
+    if (!track) {
+      throw new UnprocessableEntityException(
+        `Track with id ${id} doesn't exists`,
+      );
+    }
     this.storage.addTrack(id);
   }
 
