@@ -33,6 +33,30 @@ export class FavoritesService {
     });
   }
 
+  addArtist(id: string) {
+    this.storage.addArtist(id);
+  }
+
+  removeArtist(id: string) {
+    const isDeleted = this.storage.removeArtist(id);
+    if (!isDeleted) {
+      throw new NotFoundException(
+        `Artist with id ${id} not found in favorites`,
+      );
+    }
+  }
+
+  addAlbum(id: string) {
+    this.storage.addAlbum(id);
+  }
+
+  removeAlbum(id: string) {
+    const isDeleted = this.storage.removeAlbum(id);
+    if (!isDeleted) {
+      throw new NotFoundException(`Album with id ${id} not found in favorites`);
+    }
+  }
+
   addTrack(id: string) {
     this.storage.addTrack(id);
   }
