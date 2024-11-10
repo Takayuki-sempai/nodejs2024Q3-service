@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Track } from '../entities/track.entity';
+import { InMemoryFavoritesStorage } from '../../favorites/storage/in-memory.favorites.storage';
 
 @Injectable()
 export class InMemoryTracksStorage {
+  constructor(private readonly favoritesStorage: InMemoryFavoritesStorage) {}
+
   private entities: Map<string, Track> = new Map();
 
   findAll(): Track[] {
@@ -25,6 +28,7 @@ export class InMemoryTracksStorage {
   }
 
   remove(id: string): boolean {
+    this.favoritesStorage.removeTrack(id);
     return this.entities.delete(id);
   }
 }

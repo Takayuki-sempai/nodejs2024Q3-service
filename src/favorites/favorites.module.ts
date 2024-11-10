@@ -9,6 +9,7 @@ import { ArtistsModule } from '../artists/artists.module';
 @Module({
   controllers: [FavoritesController],
   providers: [FavoritesService, InMemoryFavoritesStorage],
+  exports: [InMemoryFavoritesStorage],
   imports: [
     forwardRef(() => TracksModule),
     forwardRef(() => AlbumsModule),

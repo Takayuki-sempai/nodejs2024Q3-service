@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { Artist } from '../entities/artist.entity';
 import { InMemoryTracksStorage } from '../../tracks/storage/in-memory.tracks.storage';
 import { InMemoryAlbumsStorage } from '../../albums/storage/in-memory.albums.storage';
+import { InMemoryFavoritesStorage } from '../../favorites/storage/in-memory.favorites.storage';
 
 @Injectable()
 export class InMemoryArtistsStorage {
   constructor(
     private readonly tracksStorage: InMemoryTracksStorage,
     private readonly albumsStorage: InMemoryAlbumsStorage,
+    private readonly favoritesStorage: InMemoryFavoritesStorage,
   ) {}
 
   private entities: Map<string, Artist> = new Map();
@@ -34,6 +36,7 @@ export class InMemoryArtistsStorage {
   remove(id: string): boolean {
     this.removeFromTracksCascade(id);
     this.removeFromAlbumsCascade(id);
+    this.favoritesStorage.removeArtist(id);
     return this.entities.delete(id);
   }
 
