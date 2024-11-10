@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InMemoryFavoritesStorage } from './storage/in-memory.favorites.storage';
 import { InMemoryAlbumsStorage } from '../albums/storage/in-memory.albums.storage';
 import { InMemoryArtistsStorage } from '../artists/storage/in-memory.artists.storage';
@@ -35,6 +35,13 @@ export class FavoritesService {
 
   addTrack(id: string) {
     this.storage.addTrack(id);
+  }
+
+  removeTrack(id: string) {
+    const isDeleted = this.storage.removeTrack(id);
+    if (!isDeleted) {
+      throw new NotFoundException(`Track with id ${id} not found in favorites`);
+    }
   }
 
   private entityToDto<T>(cls: ClassConstructor<T>, entity: T): T {

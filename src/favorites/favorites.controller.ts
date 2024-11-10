@@ -5,6 +5,7 @@ import {
   Param,
   ParseUUIDPipe,
   HttpCode,
+  Delete,
 } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
 
@@ -21,5 +22,11 @@ export class FavoritesController {
   @HttpCode(201)
   addTrack(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.favoritesService.addTrack(id);
+  }
+
+  @Delete('track/:id')
+  @HttpCode(204)
+  removeTrack(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.favoritesService.removeTrack(id);
   }
 }

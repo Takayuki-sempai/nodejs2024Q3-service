@@ -29,4 +29,28 @@ export class InMemoryFavoritesStorage {
   addTrack(trackId: string) {
     if (!this.tracks.includes(trackId)) this.tracks.push(trackId);
   }
+
+  removeArtist(artistId: string): boolean {
+    const exists = this.artists.some((id) => id !== artistId);
+    if (exists) {
+      this.artists = this.artists.filter((id) => id !== artistId);
+    }
+    return exists;
+  }
+
+  removeAlbum(albumId: string) {
+    const exists = this.albums.some((id) => id !== albumId);
+    if (exists) {
+      this.albums = this.albums.filter((id) => id !== albumId);
+    }
+    return exists;
+  }
+
+  removeTrack(trackId: string) {
+    const exists = this.tracks.some((id) => id !== trackId);
+    if (exists) {
+      this.tracks = this.tracks.filter((id) => id !== trackId);
+    }
+    return exists;
+  }
 }
