@@ -16,6 +16,12 @@ export class InMemoryArtistsStorage {
     return [...this.entities.values()];
   }
 
+  findAllByIdIn(ids: string[]): Artist[] {
+    return [...this.entities.values()].filter((entity) =>
+      ids.includes(entity.id),
+    );
+  }
+
   findById(id: string): Artist | undefined {
     return this.entities.get(id);
   }

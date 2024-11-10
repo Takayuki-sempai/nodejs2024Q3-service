@@ -13,8 +13,8 @@ import { InMemoryAlbumsStorage } from '../albums/storage/in-memory.albums.storag
 export class TracksService {
   constructor(
     private readonly storage: InMemoryTracksStorage,
-    private readonly albumStorage: InMemoryAlbumsStorage,
-    private readonly artistStorage: InMemoryArtistsStorage,
+    private readonly albumsStorage: InMemoryAlbumsStorage,
+    private readonly artistsStorage: InMemoryArtistsStorage,
   ) {}
 
   create(createTrackDto: CreateTrackDto): TrackDto {
@@ -62,7 +62,7 @@ export class TracksService {
 
   private validateArtist(artistId: string | null) {
     if (artistId != null) {
-      const artist = this.artistStorage.findById(artistId);
+      const artist = this.artistsStorage.findById(artistId);
       if (!artist) {
         throw new NotFoundException(`Artist ${artistId} not found`);
       }
@@ -71,7 +71,7 @@ export class TracksService {
 
   private validateAlbum(albumId: string | null) {
     if (albumId != null) {
-      const album = this.albumStorage.findById(albumId);
+      const album = this.albumsStorage.findById(albumId);
       if (!album) {
         throw new NotFoundException(`Album ${albumId} not found`);
       }

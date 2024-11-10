@@ -12,7 +12,7 @@ import { AlbumDto } from './dto/album.dto';
 export class AlbumsService {
   constructor(
     private readonly storage: InMemoryAlbumsStorage,
-    private readonly artistStorage: InMemoryArtistsStorage,
+    private readonly artistsStorage: InMemoryArtistsStorage,
   ) {}
 
   create(createAlbumDto: CreateAlbumDto): AlbumDto {
@@ -58,7 +58,7 @@ export class AlbumsService {
 
   private validateArtist(artistId: string | null) {
     if (artistId != null) {
-      const artist = this.artistStorage.findById(artistId);
+      const artist = this.artistsStorage.findById(artistId);
       if (!artist) {
         throw new NotFoundException(`Artist ${artistId} not found`);
       }

@@ -12,6 +12,12 @@ export class InMemoryAlbumsStorage {
     return [...this.entities.values()];
   }
 
+  findAllByIdIn(ids: string[]): Album[] {
+    return [...this.entities.values()].filter((entity) =>
+      ids.includes(entity.id),
+    );
+  }
+
   findById(id: string): Album | undefined {
     return this.entities.get(id);
   }

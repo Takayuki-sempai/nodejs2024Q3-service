@@ -9,6 +9,12 @@ export class InMemoryTracksStorage {
     return [...this.entities.values()];
   }
 
+  findAllByIdIn(ids: string[]): Track[] {
+    return [...this.entities.values()].filter((entity) =>
+      ids.includes(entity.id),
+    );
+  }
+
   findById(id: string): Track | undefined {
     return this.entities.get(id);
   }
