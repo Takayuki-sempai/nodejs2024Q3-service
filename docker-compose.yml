@@ -9,7 +9,9 @@ services:
       - "${PORT}:${PORT}"
     volumes:
       - ./src:/app/src/
-    restart: always
+    networks:
+      - app_network
+    restart: on-failure
   db:
     build:
       context: .
@@ -22,7 +24,14 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - postgres_log:/postgres_logs
+    networks:
+      - app_network
+    restart: on-failure
 
 volumes:
   postgres_data:
   postgres_log:
+
+networks:
+  app_network:
+    driver: bridge
