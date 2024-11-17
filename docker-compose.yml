@@ -2,7 +2,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: app.Dockerfile
     env_file:
       - .env
     ports:
@@ -10,3 +10,19 @@ services:
     volumes:
       - ./src:/app/src/
     restart: always
+  db:
+    build:
+      context: .
+      dockerfile: db.Dockerfile
+    user: postgres
+    env_file:
+      - .env
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - postgres_log:/postgres_logs
+
+volumes:
+  postgres_data:
+  postgres_log:
