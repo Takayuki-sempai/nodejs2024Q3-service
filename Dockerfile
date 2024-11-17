@@ -1,5 +1,7 @@
 FROM node:22-alpine
 WORKDIR /app
-COPY . .
+COPY package.json ./
+RUN npm config set strict-ssl false
 RUN npm install
-ENTRYPOINT ["npm","run","start"]
+COPY . .
+ENTRYPOINT ["npm","run","start:dev"]
