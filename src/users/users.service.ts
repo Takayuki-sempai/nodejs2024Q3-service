@@ -20,8 +20,8 @@ export class UsersService {
   }
 
   async findAll(): Promise<UserDto[]> {
-    const users = await this.storage.user.findMany();
-    return users.map(this.entityToDto);
+    const entities = await this.storage.user.findMany();
+    return entities.map(this.entityToDto);
   }
 
   async findOne(id: string): Promise<UserDto> {
