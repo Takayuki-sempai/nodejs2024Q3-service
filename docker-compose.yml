@@ -11,6 +11,8 @@ services:
       - ./src:/app/src/
     networks:
       - app_network
+    depends_on:
+      - db
     restart: on-failure
   db:
     build:
