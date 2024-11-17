@@ -27,6 +27,17 @@ After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
+## Running application with docker
+First of all create and run containers
+```
+docker compose up 
+```
+Then run prisma migration
+```
+npx prisma migrate deploy
+```
+
+
 ## Testing
 
 After application running open new terminal and enter:
