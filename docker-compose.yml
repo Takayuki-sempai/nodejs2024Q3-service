@@ -1,0 +1,39 @@
+services:
+  app:
+    image: takayuki1sempai/music-library
+    env_file:
+      - .env
+    ports:
+      - "${PORT}:${PORT}"
+    volumes:
+      - ./src:/app/src/
+    networks:
+      - app_network
+    depends_on:
+      - db
+    restart: on-failure
+  db:
+    image: takayuki1sempai/music-db
+    command:
+      - '-c'
+      - 'logging_collector=on'
+      - '-c'
+      - 'log_directory=logs'
+      - '-c'
+      - 'log_statement=all'
+    env_file:
+      - .env
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+    restart: on-failure
+
+volumes:
+  postgres_data:
+
+networks:
+  app_network:
+    driver: bridge
