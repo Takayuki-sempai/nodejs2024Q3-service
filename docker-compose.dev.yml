@@ -1,6 +1,8 @@
 services:
   app:
-    image: takayuki1sempai/music-library
+    build:
+      context: .
+      dockerfile: app.Dockerfile
     env_file:
       - .env
     ports:
@@ -13,7 +15,9 @@ services:
       - db
     restart: on-failure
   db:
-    image: takayuki1sempai/music-db
+    build:
+      context: .
+      dockerfile: db.Dockerfile
     command:
       - '-c'
       - 'logging_collector=on'

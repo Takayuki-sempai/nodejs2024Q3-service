@@ -31,6 +31,10 @@ For more information about OpenAPI/Swagger please visit https://swagger.io/.
 ```
 docker compose up 
 ```
+Running with building image:
+```
+docker compose -f ./docker-compose.dev.yml up 
+```
 
 
 ## Testing
