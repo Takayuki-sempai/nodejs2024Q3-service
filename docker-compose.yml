@@ -15,25 +15,28 @@ services:
       - db
     restart: on-failure
   db:
-    image: postgres:17-alpine
-#    build:
-#      context: .
-#      dockerfile: db.Dockerfile
-#    user: postgres
+    build:
+      context: .
+      dockerfile: db.Dockerfile
+    command:
+      - '-c'
+      - 'logging_collector=on'
+      - '-c'
+      - 'log_directory=logs'
+      - '-c'
+      - 'log_statement=all'
     env_file:
       - .env
     ports:
       - "${POSTGRES_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - postgres_log:/postgres_logs
     networks:
       - app_network
     restart: on-failure
 
 volumes:
   postgres_data:
-  postgres_log:
 
 networks:
   app_network:
