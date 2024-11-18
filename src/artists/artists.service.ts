@@ -34,18 +34,15 @@ export class ArtistsService {
     id: string,
     updateArtistDto: UpdateArtistDto,
   ): Promise<ArtistDto> {
-    // const entity = await this.storage.artist.findUnique({ where: { id } });
-    const updatedEntity = await this.storage.artist.update({
-      where: { id },
-      data: updateArtistDto,
-    });
-    if (!updatedEntity) {
+    try {
+      const updatedEntity = await this.storage.artist.update({
+        where: { id },
+        data: updateArtistDto,
+      });
+      return this.entityToDto(updatedEntity);
+    } catch {
       throw new NotFoundException(`Artist with id ${id} not found`);
     }
-    // const updatedEntity = this.storage.save(
-    //   plainToInstance(Artist, { id, ...updateArtistDto }),
-    // );
-    return this.entityToDto(updatedEntity);
   }
 
   async remove(id: string) {

@@ -1,77 +1,74 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
-import { InMemoryTracksStorage } from './storage/in-memory.tracks.storage';
 import { plainToInstance } from 'class-transformer';
-import { v4 as uuid4 } from 'uuid';
 import { TrackDto } from './dto/track.dto';
 import { Track } from './entities/track.entity';
 import { UpdateTrackDto } from './dto/update-track.dto';
-import { InMemoryArtistsStorage } from '../artists/storage/in-memory.artists.storage';
-import { InMemoryAlbumsStorage } from '../albums/storage/in-memory.albums.storage';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class TracksService {
-  constructor(
-    private readonly storage: InMemoryTracksStorage,
-    private readonly albumsStorage: InMemoryAlbumsStorage,
-    private readonly artistsStorage: InMemoryArtistsStorage,
-  ) {}
+  constructor(private readonly storage: PrismaService) {}
 
-  create(createTrackDto: CreateTrackDto): TrackDto {
-    this.validateArtist(createTrackDto.artistId);
-    this.validateAlbum(createTrackDto.albumId);
-    const entity = plainToInstance(Track, {
-      ...createTrackDto,
-      id: uuid4(),
+  async create(createTrackDto: CreateTrackDto): Promise<TrackDto> {
+    await this.validateArtist(createTrackDto.artistId);
+    await this.validateAlbum(createTrackDto.albumId);
+    const savedEntity = await this.storage.track.create({
+      data: createTrackDto,
     });
-    const savedEntity = this.storage.save(entity);
     return this.entityToDto(savedEntity);
   }
 
-  findAll(): TrackDto[] {
-    return this.storage.findAll().map(this.entityToDto);
+  async findAll(): Promise<TrackDto[]> {
+    const entities = await this.storage.track.findMany();
+    return entities.map(this.entityToDto);
   }
 
-  findOne(id: string): TrackDto {
-    const entity = this.storage.findById(id);
+  async findOne(id: string): Promise<TrackDto> {
+    const entity = await this.storage.track.findUnique({ where: { id } });
     if (!entity) {
       throw new NotFoundException(`Track with id ${id} not found`);
     }
     return this.entityToDto(entity);
   }
 
-  update(id: string, updateTrackDto: UpdateTrackDto): TrackDto {
-    this.validateArtist(updateTrackDto.artistId);
-    this.validateAlbum(updateTrackDto.albumId);
-    const entity = this.storage.findById(id);
-    if (!entity) {
-      throw new NotFoundException(`Track with id ${id} not found`);
-    }
-    const updatedEntity = this.storage.save(
-      plainToInstance(Track, { id, ...updateTrackDto }),
-    );
-    return this.entityToDto(updatedEntity);
-  }
-
-  remove(id: string) {
-    const isDeleted = this.storage.remove(id);
-    if (!isDeleted) {
+  async update(id: string, updateTrackDto: UpdateTrackDto): Promise<TrackDto> {
+    await this.validateArtist(updateTrackDto.artistId);
+    await this.validateAlbum(updateTrackDto.albumId);
+    try {
+      const updatedEntity = await this.storage.track.update({
+        where: { id },
+        data: updateTrackDto,
+      });
+      return this.entityToDto(updatedEntity);
+    } catch {
       throw new NotFoundException(`Track with id ${id} not found`);
     }
   }
 
-  private validateArtist(artistId: string | null) {
+  async remove(id: string) {
+    const deleted = await this.storage.track.deleteMany({ where: { id } });
+    if (deleted.count != 1) {
+      throw new NotFoundException(`Track with id ${id} not found`);
+    }
+  }
+
+  private async validateArtist(artistId: string | null) {
     if (artistId != null) {
-      const artist = this.artistsStorage.findById(artistId);
+      const artist = await this.storage.artist.findUnique({
+        where: { id: artistId },
+      });
       if (!artist) {
         throw new NotFoundException(`Artist ${artistId} not found`);
       }
     }
   }
 
-  private validateAlbum(albumId: string | null) {
+  private async validateAlbum(albumId: string | null) {
     if (albumId != null) {
-      const album = this.albumsStorage.findById(albumId);
+      const album = await this.storage.album.findUnique({
+        where: { id: albumId },
+      });
       if (!album) {
         throw new NotFoundException(`Album ${albumId} not found`);
       }
