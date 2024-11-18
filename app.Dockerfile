@@ -4,4 +4,4 @@ COPY package.json package-lock.json ./
 RUN npm config set strict-ssl false
 RUN npm install
 COPY . .
-ENTRYPOINT ["npm","run","start:dev"]
+ENTRYPOINT ["npm","run","start:migrate"]
