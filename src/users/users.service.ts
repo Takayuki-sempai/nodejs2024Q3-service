@@ -9,13 +9,23 @@ import { UserDto } from './dto/user.dto';
 import { User } from './entities/user';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from '../prisma/prisma.service';
+import { compare, hash } from 'bcrypt';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly storage: PrismaService) {}
 
   async create(createUserDto: CreateUserDto): Promise<UserDto> {
-    const savedEntity = await this.storage.user.create({ data: createUserDto });
+    const hashPassword = await hash(
+      createUserDto.password,
+      +process.env.CRYPT_SALT,
+    );
+    const savedEntity = await this.storage.user.create({
+      data: {
+        login: createUserDto.login,
+        password: hashPassword,
+      },
+    });
     return this.entityToDto(savedEntity);
   }
 
@@ -37,13 +47,21 @@ export class UsersService {
     if (!entity) {
       throw new NotFoundException(`User with id ${id} not found`);
     }
-    if (entity.password != updateUserDto.oldPassword) {
+    const isPasswordMatched = await compare(
+      updateUserDto.oldPassword,
+      entity.password,
+    );
+    if (!isPasswordMatched) {
       throw new ForbiddenException(`OldPassword is wrong`);
     }
+    const newPassword = await hash(
+      updateUserDto.newPassword,
+      +process.env.CRYPT_SALT,
+    );
     const updatedEntity = await this.storage.user.update({
       where: { id },
       data: {
-        password: updateUserDto.newPassword,
+        password: newPassword,
         version: entity.version + 1,
       },
     });

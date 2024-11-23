@@ -20,12 +20,7 @@ export class AuthService {
   ) {}
 
   async signup(authDto: AuthDto) {
-    const hashPassword = await hash(authDto.password, +process.env.CRYPT_SALT);
-
-    return this.usersService.create({
-      login: authDto.login,
-      password: hashPassword,
-    });
+    return this.usersService.create(authDto);
   }
 
   async login(authDto: AuthDto) {
