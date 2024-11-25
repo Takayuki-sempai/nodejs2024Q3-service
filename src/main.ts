@@ -7,6 +7,7 @@ import * as Yaml from 'yaml';
 import 'dotenv/config';
 import { SwaggerModule } from '@nestjs/swagger';
 import { ExceptionFilter } from './exception/exception.filter';
+import { LoggingService } from './logging/logging.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,6 +21,7 @@ async function bootstrap() {
     new ValidationPipe({ whitelist: true, strictGroups: true }),
   );
   app.useGlobalFilters(new ExceptionFilter());
+  app.useLogger(app.get(LoggingService));
   const port = +process.env.PORT || 4000;
   await app.listen(port);
 }
