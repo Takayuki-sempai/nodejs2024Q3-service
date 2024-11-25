@@ -1,7 +1,7 @@
 import { ConsoleLogger, Injectable } from '@nestjs/common';
 import { isAbsolute, join } from 'node:path';
 import { dirname } from 'node:path';
-import { appendFile, appendFileSync, mkdir, rename, renameSync, stat, statSync } from 'node:fs';
+import { appendFileSync, readdirSync, renameSync, rmSync, statSync } from 'node:fs';
 import { mkdirSync } from 'fs';
 
 enum LogLevel {
@@ -83,9 +83,29 @@ export class LoggingService extends ConsoleLogger {
         const newFilePath = join(dirPath, `${fileName}_${Date.now()}.log`);
         renameSync(filePath, newFilePath);
       }
+
+      const files = readdirSync(dirPath, { withFileTypes: true }).filter(
+        (file) => file.name.endsWith('.log'),
+      );
+      if (files.length > this.maxFiles) {
+        const sortedFiles = files
+          .filter((file) => file.name.split('_').length > 1) //Exclude log.log and error.log
+          .sort(
+            (file1, file2) =>
+              +this.getFileDate(file1.name) - +this.getFileDate(file2.name),
+          );
+        const deleteFileCount = files.length - this.maxFiles;
+        for (let i = 0; i < deleteFileCount; i++) {
+          rmSync(join(sortedFiles[i].parentPath, sortedFiles[i].name));
+        }
+      }
     } catch (error) {
       super.error(error.message);
     }
+  }
+
+  private getFileDate(fileName: string) {
+    return fileName.replace('.log', '').replace('log', '').replace('error', '');
   }
 
   private toAbsolutePath = (filepath) =>
