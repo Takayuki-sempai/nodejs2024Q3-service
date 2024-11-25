@@ -1,10 +1,11 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { AuthDto } from './dto/auth.dto';
-import { compare, hash } from 'bcrypt';
+import { compare } from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
-import { JwtPayload } from 'jsonwebtoken';
+import { decode, JwtPayload } from 'jsonwebtoken';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 interface Payload extends JwtPayload {
   userId: string;
@@ -42,6 +43,19 @@ export class AuthService {
 
     const authPayload = { userId: user.id, login: user.login };
     return this.generateTokens(authPayload);
+  }
+
+  async refresh(refreshTokenDto: RefreshTokenDto) {
+    try {
+      await this.jwtService.verify(refreshTokenDto.refreshToken, {
+        secret: process.env.JWT_SECRET_REFRESH_KEY,
+      });
+    } catch {
+      throw new ForbiddenException('Refresh token invalid');
+    }
+
+    const { userId, login } = decode(refreshTokenDto.refreshToken) as Payload;
+    return this.generateTokens({ userId, login });
   }
 
   private async generateTokens(payload: Payload) {
