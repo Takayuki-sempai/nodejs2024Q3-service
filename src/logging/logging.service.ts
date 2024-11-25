@@ -1,7 +1,8 @@
 import { ConsoleLogger, Injectable } from '@nestjs/common';
 import { isAbsolute, join } from 'node:path';
 import { dirname } from 'node:path';
-import { appendFile, mkdir } from 'node:fs/promises';
+import { appendFile, appendFileSync, mkdir, rename, renameSync, stat, statSync } from 'node:fs';
+import { mkdirSync } from 'fs';
 
 enum LogLevel {
   FATAL = 0,
@@ -15,7 +16,7 @@ enum LogLevel {
 @Injectable()
 export class LoggingService extends ConsoleLogger {
   private logLevel: LogLevel = +process.env.LOG_LEVEL || LogLevel.ERROR;
-  private maxSizeInBytes: number = +process.env.MAX_FILE_SIZE || 1024 * 1024;
+  private maxSizeInBytes: number = (+process.env.MAX_FILE_SIZE || 1024) * 1024;
   private maxFiles: number = +process.env.MAX_FILE_NUMBER || 5;
 
   log(message: any, context?: string) {
@@ -60,7 +61,7 @@ export class LoggingService extends ConsoleLogger {
     }
   }
 
-  private async logToFile(level: LogLevel, message: any, context?: string) {
+  private logToFile(level: LogLevel, message: any, context?: string) {
     const levelName = LogLevel[level];
     const dirName = process.env.LOG_DIR || 'logs';
 
@@ -74,8 +75,14 @@ export class LoggingService extends ConsoleLogger {
       const fileName = level <= LogLevel.ERROR ? 'error' : 'log';
       const filePath = join(dirPath, `${fileName}.log`);
 
-      await mkdir(dirPath, { recursive: true });
-      await appendFile(filePath, formattedEntry);
+      mkdirSync(dirPath, { recursive: true });
+      appendFileSync(filePath, formattedEntry);
+
+      const fileStat = statSync(filePath);
+      if (fileStat.size > this.maxSizeInBytes) {
+        const newFilePath = join(dirPath, `${fileName}_${Date.now()}.log`);
+        renameSync(filePath, newFilePath);
+      }
     } catch (error) {
       super.error(error.message);
     }
