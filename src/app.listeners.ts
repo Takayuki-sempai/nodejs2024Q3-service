@@ -6,11 +6,11 @@ export const setupGlobalErrorListeners = (logger: LoggingService) => {
       ? error.message
       : 'Uncaught Error occurred';
 
-    logger.fatal(errorMessage, 'uncaughtException');
+    logger.fatal(errorMessage, 'UncaughtException');
   });
 
   process.on('unhandledRejection', (reason) => {
     const message = reason instanceof Error ? reason.message : reason;
-    logger.fatal(message, 'unhandledRejection');
+    logger.fatal(message, 'UnhandledRejection');
   });
 };

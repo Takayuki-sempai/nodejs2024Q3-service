@@ -1,8 +1,15 @@
 import { ConsoleLogger, Injectable } from '@nestjs/common';
 import { isAbsolute, join } from 'node:path';
 import { dirname } from 'node:path';
-import { appendFileSync, readdirSync, renameSync, rmSync, statSync } from 'node:fs';
+import {
+  appendFileSync,
+  readdirSync,
+  renameSync,
+  rmSync,
+  statSync,
+} from 'node:fs';
 import { mkdirSync } from 'fs';
+import { ConsoleLoggerOptions } from '@nestjs/common/services/console-logger.service';
 
 enum LogLevel {
   FATAL = 0,
@@ -21,43 +28,43 @@ export class LoggingService extends ConsoleLogger {
 
   log(message: any, context?: string) {
     if (this.logLevel >= LogLevel.LOG) {
-      this.logToFile(LogLevel.LOG, message, context);
-      super.log(message, context);
+      this.logToFile(LogLevel.LOG, message, context || this.context);
+      super.log(message, context || this.context);
     }
   }
 
   error(message: any, stackOrContext?: string) {
     if (this.logLevel >= LogLevel.ERROR) {
-      this.logToFile(LogLevel.ERROR, message, stackOrContext);
-      super.error(message, stackOrContext);
+      this.logToFile(LogLevel.ERROR, message, stackOrContext || this.context);
+      super.error(message, stackOrContext || this.context);
     }
   }
 
   warn(message: any, context?: string) {
     if (this.logLevel >= LogLevel.WARN) {
-      this.logToFile(LogLevel.WARN, message, context);
-      super.warn(message, context);
+      this.logToFile(LogLevel.WARN, message, context || this.context);
+      super.warn(message, context || this.context);
     }
   }
 
   debug(message: any, context?: string) {
     if (this.logLevel >= LogLevel.DEBUG) {
-      this.logToFile(LogLevel.DEBUG, message, context);
-      super.debug(message, context);
+      this.logToFile(LogLevel.DEBUG, message, context || this.context);
+      super.debug(message, context || this.context);
     }
   }
 
   verbose(message: any, context?: string) {
     if (this.logLevel >= LogLevel.VERBOSE) {
-      this.logToFile(LogLevel.VERBOSE, message, context);
-      super.verbose(message, context);
+      this.logToFile(LogLevel.VERBOSE, message, context || this.context);
+      super.verbose(message, context || this.context);
     }
   }
 
   fatal(message: any, context?: string) {
     if (this.logLevel >= LogLevel.FATAL) {
-      this.logToFile(LogLevel.FATAL, message, context);
-      super.fatal(message, context);
+      this.logToFile(LogLevel.FATAL, message, context || this.context);
+      super.fatal(message, context || this.context);
     }
   }
 

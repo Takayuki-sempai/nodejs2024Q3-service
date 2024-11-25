@@ -2,10 +2,11 @@ import {
   ArgumentsHost,
   Catch,
   HttpException,
-  HttpStatus,
+  HttpStatus
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { BaseExceptionFilter } from '@nestjs/core';
+import { LoggingService } from '../logging/logging.service';
 
 interface Body {
   statusCode: number;
@@ -16,6 +17,8 @@ interface Body {
 
 @Catch()
 export class ExceptionFilter extends BaseExceptionFilter {
+  private readonly logger = new LoggingService(ExceptionFilter.name);
+
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -34,5 +37,13 @@ export class ExceptionFilter extends BaseExceptionFilter {
     }
 
     response.status(body.statusCode).json(body);
+
+    const errorMessage = 'Error response:' + JSON.stringify(body);
+
+    if (body.statusCode < 500) {
+      this.logger.warn(errorMessage);
+    } else {
+      this.logger.error(errorMessage);
+    }
   }
 }
