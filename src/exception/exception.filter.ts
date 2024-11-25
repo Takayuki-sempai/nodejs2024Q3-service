@@ -2,7 +2,7 @@ import {
   ArgumentsHost,
   Catch,
   HttpException,
-  HttpStatus
+  HttpStatus,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { BaseExceptionFilter } from '@nestjs/core';

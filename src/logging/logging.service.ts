@@ -9,7 +9,6 @@ import {
   statSync,
 } from 'node:fs';
 import { mkdirSync } from 'fs';
-import { ConsoleLoggerOptions } from '@nestjs/common/services/console-logger.service';
 
 enum LogLevel {
   FATAL = 0,
