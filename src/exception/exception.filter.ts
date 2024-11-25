@@ -17,7 +17,7 @@ interface Body {
 
 @Catch()
 export class ExceptionFilter extends BaseExceptionFilter {
-  private readonly logger = new LoggingService(ExceptionFilter.name);
+  private readonly logger = new LoggingService('ErrorResponse');
 
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -38,12 +38,19 @@ export class ExceptionFilter extends BaseExceptionFilter {
 
     response.status(body.statusCode).json(body);
 
-    const errorMessage = 'Error response:' + JSON.stringify(body);
+    const errorMessage = this.generateErrorMessage(request, body);
 
     if (body.statusCode < 500) {
       this.logger.warn(errorMessage);
     } else {
       this.logger.error(errorMessage);
     }
+  }
+
+  private generateErrorMessage(
+    { url, method }: Request,
+    { statusCode, response }: Body,
+  ) {
+    return `{ url: ${url}, method: ${method}, status: ${statusCode} } response: ${JSON.stringify(response)}`;
   }
 }
