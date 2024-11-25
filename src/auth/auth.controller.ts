@@ -4,7 +4,8 @@ import {
   Body,
   ValidationPipe,
   UsePipes,
-  HttpStatus, HttpCode
+  HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
